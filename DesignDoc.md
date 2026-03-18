@@ -88,21 +88,24 @@
 
 
 
-	Stamina System
-		Attacks consume stamina
-		Dodging consumes stamina
-		Blocking consumes stamina (if applicable)
-		Stamina regenerates after delay
+	Stamina System (Implemented)
+		Light Attack: 15 stamina
+		Heavy Attack: 25 stamina
+		Roll: 20 stamina
+		Block: 15 stamina drain while held
+		Regeneration: 20/sec after 2-second delay
+		Low stamina affects movement/combat (future feature)
 	Health & Healing
 		Health bar
 		Limited healing uses per checkpoint
 		Healing animation can be interrupted
 
-	Strategic Depth & Positioning
+	Strategic Depth & Positioning (Implemented)
 		Risk/Reward Combat: Aggressive play vs conservative positioning
 		Terrain Usage: Use platforms, walls for flanking and cover
 		Enemy Positioning: Lure enemies into traps, separate groups
 		Stamina Management: Balance offense vs defense vs mobility
+		Roll Pass-Through: Player can roll through enemy bodies (i-frames)
 		Attack Anticipation: Read enemy telegraphs for counter opportunities
 		Combo Potential: Chain attacks for damage bonuses (future feature)
 
@@ -230,13 +233,13 @@
 	Controller support ⭐ Highly recommended ⭐
 	Rebindable inputs
 
-	Current Godot Input Actions:
+	Current Godot Input Actions (Implemented):
 	A/D or Left/Right Arrow: Move left/right
 	W or Up Arrow or Space: Jump
-	Shift: Roll (hold during landing for instant roll)
-	Left Click: Light attack
-	Shift + Left Click: Heavy attack
-	Right Click (hold): Block
+	Shift: Roll (hold during landing for instant roll) - costs 20 stamina
+	Left Click: Light attack (costs 15 stamina)
+	Shift + Left Click: Heavy attack (costs 25 stamina)
+	Right Click (hold): Block (50% damage reduction, drains 15 stamina)
 
 
 16. Technical Requirements

@@ -36,6 +36,16 @@ func _idle_behavior(delta): velocity.x = move_toward(velocity.x, 0, friction)
 - **Solution**: Base only stops movement, subclasses handle all transitions
 - **Result**: Timer-based idle periods now work correctly
 
+**Multi-Hit Prevention Fix**: Attack hitboxes were causing multiple damage per attack
+- **Problem**: Enemy attack animations stayed active longer than hurtbox i-frames
+- **Solution**: Added `has_hit` flag to attack_hitbox, reset on animation finish
+- **Result**: Clean single-hit attacks, no damage spam
+
+**Killzone Death State Fix**: Killzone bypassed proper death handling
+- **Problem**: Killzone directly reloaded scene instead of triggering die() method
+- **Solution**: Killzone now calls `body.die()` for proper slow-motion death sequence
+- **Result**: Consistent death handling across fall damage and enemy kills
+
 ## Current Architecture
 
 ### State Machines
@@ -104,17 +114,24 @@ func _idle_behavior(delta): velocity.x = move_toward(velocity.x, 0, friction)
 
 ## Current Development Status
 
-### ✅ Completed
+### ✅ Version 0.1 Complete - Pushed to GitHub
+**Repository**: https://github.com/Toastyst/HelloKnight
+**Commit**: feat: Complete core state machine and combat system
+**Files**: 967 objects committed and pushed
+
+**Core Features Implemented:**
 - Player state machine with combat states (11/11 states)
 - Enemy template with AI framework (6/8 states)
 - Health system with signals
-- Stamina system with consumption/regeneration
-- Blocking mechanics with damage reduction
-- Roll pass-through collision system
-- Multi-hit prevention for attacks
+- Stamina system with consumption/regeneration (attacks: 15/25, roll: 20, block: 15)
+- Blocking mechanics with damage reduction (50%)
+- Roll pass-through collision system (enemy body avoidance during roll)
+- Multi-hit prevention for attacks (clean single-hit damage)
 - Basic UI components (health + stamina bars)
 - Collision layer planning and implementation
 - Direct damage system with CombatManager
+- Killzone proper death state handling
+- Git repository setup and version control
 
 ### 🚧 In Progress
 - Combat testing and balancing
@@ -159,10 +176,13 @@ scripts/
 ├── player.gd              # Player state machine & controls
 ├── enemy_template.gd      # Base enemy with states & AI
 ├── enemy_grunt.gd         # Patrol enemy implementation
-├── attack_hitbox.gd       # Direct damage dealing
+├── attack_hitbox.gd       # Direct damage dealing (multi-hit prevention)
 ├── hurtbox.gd             # Damage receiving (parked)
 ├── combat_manager.gd      # Complex combat resolution (parked)
 ├── health_bar.gd          # UI health display
+├── stamina_bar.gd         # UI stamina display
+├── game_manager.gd        # Game state management (parked)
+├── controls_layout.gd     # Input configuration (parked)
 └── coin.gd               # Collectable placeholder
 
 scenes/
@@ -170,6 +190,7 @@ scenes/
 ├── enemies/
 │   ├── enemy_grunt.tscn  # Enemy with hitboxes
 │   └── skele0.tscn       # Future skeleton enemy
+├── ui_bars.tscn          # Health and stamina UI
 └── game.tscn            # Main scene
 ```
 
