@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://jwecw6n48k06"]
+
+[ext_resource type="AudioStream" uid="uid://ba7hhulh4axyq" path="res://assets/music/Ruins of the Lost Byte.mp3" id="1_05ggv"]
+
+[node name="Music" type="AudioStreamPlayer" unique_id=2110653533]
+stream = ExtResource("1_05ggv")
+autoplay = true
+bus = &"music"

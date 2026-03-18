@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://cqeqy1w2xeoc5"]
+
+[ext_resource type="Script" uid="uid://bxlammpbb5dxd" path="res://scripts/attack_hitbox.gd" id="1_boghs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qhqgy"]
+size = Vector2(11, 8)
+
+[node name="AttackHitbox" type="Area2D" unique_id=2002091790]
+monitoring = false
+script = ExtResource("1_boghs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=681662812]
+position = Vector2(-6.5, 3)
+shape = SubResource("RectangleShape2D_qhqgy")
+debug_color = Color(0.9647059, 0.14509805, 0.30588236, 0.20392157)

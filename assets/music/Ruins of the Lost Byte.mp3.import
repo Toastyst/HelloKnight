@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ba7hhulh4axyq"
+path="res://.godot/imported/Ruins of the Lost Byte.mp3-48d612791fc8c48620c1806bed7642aa.mp3str"
+
+[deps]
+
+source_file="res://assets/music/Ruins of the Lost Byte.mp3"
+dest_files=["res://.godot/imported/Ruins of the Lost Byte.mp3-48d612791fc8c48620c1806bed7642aa.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
