@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df8fcb8wxrer2"
-path="res://.godot/imported/statue.png-ee29e0a497699fcff0c9c6850d7e286c.ctex"
+path="res://.godot/imported/statue.png-7e52ce3fb90b0562244d25015979193b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/cem_pack/Environment/sliced-objects/statue.png"
-dest_files=["res://.godot/imported/statue.png-ee29e0a497699fcff0c9c6850d7e286c.ctex"]
+source_file="res://assets/sprites/Environment/sliced-objects/statue.png"
+dest_files=["res://.godot/imported/statue.png-7e52ce3fb90b0562244d25015979193b.ctex"]
 
 [params]
 

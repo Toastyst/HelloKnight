@@ -11,9 +11,9 @@ config_version=5
 [application]
 
 config/name="HelloKnight"
-run/main_scene="uid://pc3x1olt7m7q"
+run/main_scene="uid://b6e0c0x8hi7ry"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://assets/sprites/stock/icon.svg"
 
 [audio]
 

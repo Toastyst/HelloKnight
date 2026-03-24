@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5p2in0ju3b5u"
-path="res://.godot/imported/bush-large.png-10a791e9bc94c0a50387a3082fbcad10.ctex"
+path="res://.godot/imported/bush-large.png-590bbb7680759eda5c40cfacbeb1dfa1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/cem_pack/Environment/sliced-objects/bush-large.png"
-dest_files=["res://.godot/imported/bush-large.png-10a791e9bc94c0a50387a3082fbcad10.ctex"]
+source_file="res://assets/sprites/Environment/sliced-objects/bush-large.png"
+dest_files=["res://.godot/imported/bush-large.png-590bbb7680759eda5c40cfacbeb1dfa1.ctex"]
 
 [params]
 

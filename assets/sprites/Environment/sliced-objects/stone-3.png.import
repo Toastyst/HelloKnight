@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnds7kdlr563a"
-path="res://.godot/imported/stone-3.png-e56af781acb6390c55e70a631171e331.ctex"
+path="res://.godot/imported/stone-3.png-bcb888932334f7d1170d62e27575f527.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/cem_pack/Environment/sliced-objects/stone-3.png"
-dest_files=["res://.godot/imported/stone-3.png-e56af781acb6390c55e70a631171e331.ctex"]
+source_file="res://assets/sprites/Environment/sliced-objects/stone-3.png"
+dest_files=["res://.godot/imported/stone-3.png-bcb888932334f7d1170d62e27575f527.ctex"]
 
 [params]
 

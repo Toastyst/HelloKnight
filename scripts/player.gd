@@ -7,7 +7,7 @@ extends CharacterBody2D
 @export var friction: float = 1000.0
 
 # Health System
-@export var max_health: int = 100
+@export var max_health: int = 100 
 var current_health: int = max_health
 signal health_changed(new_health: int, max_health: int)
 signal died

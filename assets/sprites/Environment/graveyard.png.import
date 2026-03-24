@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bsdu0y6ed1jmt"
-path="res://.godot/imported/graveyard.png-bc4d13ebc6206b5b05e6353a239c9ef1.ctex"
+path="res://.godot/imported/graveyard.png-511ea811fdd5b6ccce8cd72c21f28fa5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/cem_pack/Environment/graveyard.png"
-dest_files=["res://.godot/imported/graveyard.png-bc4d13ebc6206b5b05e6353a239c9ef1.ctex"]
+source_file="res://assets/sprites/Environment/graveyard.png"
+dest_files=["res://.godot/imported/graveyard.png-511ea811fdd5b6ccce8cd72c21f28fa5.ctex"]
 
 [params]
 
