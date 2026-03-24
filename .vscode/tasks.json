@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run HelloKnight",
+      "type": "shell",
+      "command": "E:\\Godot\\Godot.exe",
+      "args": ["${workspaceFolder}/project.godot", "--no-window"],
+      "group": "build",
+      "presentation": {"echo": true, "reveal": "always"}
+    }
+  ]
+}

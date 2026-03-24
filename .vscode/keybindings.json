@@ -1,0 +1,3 @@
+[
+  {"key": "ctrl+f5", "command": "godot_tools.runScene"}
+]

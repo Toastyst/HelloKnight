@@ -1,3 +1,7 @@
 {
-    "godotTools.editorPath.godot4": "e:\\Godot\\Godot_v4.6.1-stable_win64.exe"
+  "godot_tools.editor_path": "E:\\Godot\\Godot.exe",
+  "gdscript.enableLinting": true,
+  "editor.codeLens": true,
+  "files.associations": {"*.gd": "gdscript"},
+  "godot_tools.sceneFormat": "compressed"
 }
