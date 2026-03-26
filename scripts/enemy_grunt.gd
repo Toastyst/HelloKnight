@@ -4,6 +4,7 @@ extends "res://scripts/enemy_template.gd"
 # Patrol properties
 @export var patrol_distance: float = 50.0
 @export var patrol_speed: float = 20.0
+@export var jump_velocity: float = -150.0
 
 var patrol_start_x: float
 var patrol_target_x: float
@@ -46,6 +47,10 @@ func _attack_behavior(_delta: float):
 	# Stop movement during attack
 	velocity.x = move_toward(velocity.x, 0, 200)
 
+	# Randomize attack type
+	if attack_hitbox:
+		attack_hitbox.attack_type = ["light", "heavy"].pick_random()
+
 	# Attack hitbox is enabled/disabled in change_state() based on ACTION_STATES
 
 func _chase_behavior(delta: float, distance: float):
@@ -57,6 +62,9 @@ func _chase_behavior(delta: float, distance: float):
 	elif distance <= detection_range and can_see:
 		# Move towards player
 		velocity.x = move_toward(velocity.x, facing_dir * move_speed, 200 * delta)
+		# Jump if distance > 30 and on floor
+		if distance > 30 and is_on_floor():
+			velocity.y = jump_velocity
 	else:
 		# Return to patrol if player out of range or not visible
 		change_state(State.PATROL)

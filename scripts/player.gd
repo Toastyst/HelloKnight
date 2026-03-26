@@ -102,9 +102,14 @@ func _physics_process(delta):
 			start_roll()
 
 	# ── MOVEMENT EXECUTION ──
-	if current_state not in ACTION_STATES and current_state != State.BLOCK:
+	if current_state not in ACTION_STATES:
+		var accel = acceleration
+		var fric = friction
+		if current_state == State.BLOCK:
+			accel *= 0.5
+			fric *= 0.5
 		if input_dir != 0:
-			velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
+			velocity.x = move_toward(velocity.x, input_dir * speed, accel * delta)
 			facing_dir = sign(input_dir)
 			animated_sprite.flip_h = facing_dir < 0
 			# Update attack hitbox position based on facing direction
@@ -113,7 +118,7 @@ func _physics_process(delta):
 				if hitbox_shape:
 					hitbox_shape.position.x = abs(hitbox_shape.position.x) * facing_dir
 		else:
-			velocity.x = move_toward(velocity.x, 0, friction * delta)
+			velocity.x = move_toward(velocity.x, 0, fric * delta)
 
 	move_and_slide()
 
@@ -159,7 +164,7 @@ func change_state(new_state: State):
 		State.BLOCK:        animated_sprite.play("idle")    # Placeholder animation
 		State.STAMINA:      animated_sprite.play("idle")    # Placeholder animation
 		State.STAGGER:      animated_sprite.play("idle")    # Placeholder animation
-		State.HURT:         animated_sprite.play("idle")    # Placeholder animation
+		State.HURT:         animated_sprite.play("hurt")    # Hurt animation
 		State.DIE:          animated_sprite.play("die")
 
 # ── ACTIONS ──

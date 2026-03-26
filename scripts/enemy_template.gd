@@ -13,6 +13,7 @@ signal died
 @export var attack_range: float = 15.0
 @export var detection_range: float = 100.0  # Increased for easier testing
 @export var move_speed: float = 30.0
+@export var gravity: float = 980.0
 
 # State machine
 enum State {
@@ -40,6 +41,8 @@ func _ready():
 	# Find player
 	player = get_tree().get_first_node_in_group("player")
 
+	set_collision_mask_value(3, true)
+
 	# Start a timer to transition to patrol if no player detected
 	startup_timer = Timer.new()
 	startup_timer.wait_time = 3.0  # 3 seconds to detect player
@@ -51,6 +54,8 @@ func _ready():
 func _physics_process(delta: float):
 	if not player:
 		return
+
+	velocity.y += gravity * delta
 
 	var distance_to_player = global_position.distance_to(player.global_position)
 	var can_see = can_see_player()

@@ -12,6 +12,8 @@ func _ready():
 		# If no CombatManager, create one or find alternative
 		print("Warning: No CombatManager found for hurtbox")
 
+	set_deferred("monitoring", true)
+
 func _on_area_entered(area: Area2D):
 	"""
 	Called when an attack hitbox enters the hurtbox.

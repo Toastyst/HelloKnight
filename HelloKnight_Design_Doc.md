@@ -138,23 +138,25 @@
 		Simple +1, +2, +3 system (optional)
 
 7. Enemies
-	Target: 4–8 Types Total
-	Type	Description
-	Grunt	Basic melee enemy
-	Fast	Agile but fragile
-	Tank	Slow, high HP
-	Ranged	Attacks from distance
-	Elite	Strong variant
-	Reuse via:
-	Palette swaps
-	Stat adjustments
-	Group compositions
+	Target: 5 Core Types (expandable to 8 via variants)
+
+	Type		Description / Role
+	Grunt		Basic goblin / human thief – Common cannon fodder and patroller
+	Fast		Dark elf thief / rogue goblin – Agile ambusher that appears in groups
+	Tank		Heavy knight / skeleton warrior – Big slow brute that blocks paths
+	Ranged		Skeleton archer – Attacks from ledges or high ground
+	Elite		Dark elf prince / heavy knight elite – Mini-boss feel, rare spawn
 
 	Enemy Attack Patterns:
-	Cooldowns between attacks to prevent spam
-	Potential stamina system for enemy actions
-	Animation-based attack timing for consistency
+	- Cooldowns between attacks to prevent spam
+	- Potential stamina system for enemy actions
+	- Animation-based attack timing for consistency and readability
 
+	Reuse Strategy:
+	- Palette swaps
+	- Stat adjustments
+	- Group compositions
+	
 8. Bosses
 	Target: 2–4 Bosses
 	Each boss should have:
