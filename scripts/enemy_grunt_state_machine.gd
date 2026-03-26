@@ -46,5 +46,3 @@ func change_state(new_state: int):
     # For attack, randomize type
     if new_state == State.ATTACK:
         attack_hitbox.attack_type = ["light", "heavy"].pick_random()
-+++++++ REPLACE</diff>
-</write_to_file>
