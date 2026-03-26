@@ -27,7 +27,7 @@ func _ready():
     super()
     current_state = State.IDLE
 
-func process_input(input_dir: Vector2, delta: float, is_on_floor: bool, velocity: Vector2, current_stamina: int) -> Variant:
+func process_input(input_dir: Vector2, delta: float, is_on_floor: bool, velocity: Vector2, current_stamina: int, attack_cooldown_stopped: bool) -> Variant:
     # If dead, no process
     if current_state == State.DIE: return null
 
@@ -44,9 +44,9 @@ func process_input(input_dir: Vector2, delta: float, is_on_floor: bool, velocity
             return State.BLOCK
         elif current_state == State.BLOCK and not Input.is_action_pressed("block"):
             return State.IDLE
-        elif Input.is_action_just_pressed("attack_light") and current_stamina >= 15:
+        elif Input.is_action_just_pressed("attack_light") and current_stamina >= 15 and attack_cooldown_stopped:
             return State.ATTACK_LIGHT
-        elif Input.is_action_just_pressed("attack_heavy") and current_stamina >= 25:
+        elif Input.is_action_just_pressed("attack_heavy") and current_stamina >= 25 and attack_cooldown_stopped:
             return State.ATTACK_HEAVY
 
     # Movement inputs
