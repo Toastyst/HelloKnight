@@ -203,5 +203,30 @@ scenes/
 
 ---
 
-*Last Updated: 2026-03-18*
+*Last Updated: 2026-03-26*
+
+### StateMachine Structure
+**Base Class (state_machine.gd)**:
+- Node extending, manages hurtbox/attackbox monitoring, animation playback.
+- Virtual methods: process(), handle_animation_finished(), getters for states/types.
+- change_state() handles monitoring and animation.
+
+**PlayerStateMachine (player_state_machine.gd)**:
+- Enum: IDLE, RUN, JUMP, FALL, ROLL, ATTACK_LIGHT, ATTACK_HEAVY, BLOCK, STAMINA, STAGGER, HURT, DIE
+- process_input(): Input priority (combat > movement), auto-transitions (landing, air).
+- handle_animation_finished(): Roll/attack/hurt/die transitions, collision for roll.
+
+**EnemyStateMachine (enemy_state_machine.gd)**:
+- Enum: IDLE, PATROL, CHASE, ATTACK, HURT, DIE
+- process_ai(): Detection/transitions, cooldowns.
+- handle_animation_finished(): Attack cooldown, return to chase/idle.
+
+**GruntStateMachine (enemy_grunt_state_machine.gd)**:
+- Extends EnemyStateMachine, adds patrol ping-pong with idle timer.
+- Overrides process_ai() for patrol logic, change_state() for random attack_type.
+
+**Integration**:
+- Base classes (player.gd, enemy_template.gd): Instantiate SM in _ready, delegate process_* in _physics_process, match state for physics/behaviors, delegate combat methods.
+- Subclasses (enemy_grunt.gd): Override SM type, keep specific behaviors (_chase_behavior for jump).
+
 *Keep this file current with project evolution*
