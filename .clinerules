@@ -48,4 +48,12 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
 - Enemy Assets: Snoblin pack for main enemies
 - Animation Limits: Most enemies have limited animations - plan for sprite shaking/polish
 
-Last updated: 2026-03-24
+## StateMachine Pattern Implementation (2026-03-26)
+Successfully refactored state machines to resolve structural breakdowns where base class automatic transitions conflicted with subclass logic. Key improvements:
+- **Separation of Concerns**: Base classes (player.gd, enemy_template.gd) handle physics/movement only; dedicated StateMachine subclasses control state transitions, behaviors, and timing.
+- **Modular Architecture**: StateMachine base class with virtual methods; PlayerStateMachine/EnemyStateMachine/GruntStateMachine extend for specific logic.
+- **Decoupling**: Signals (state_changed) for UI/debug updates; no direct dependencies between physics and state logic.
+- **Extensibility**: Easy to add new states/behaviors without modifying base physics code.
+- **Lessons Learned**: Avoid automatic transitions in base classes; use process_* methods for input/AI delegation; centralize change_state for collision/hurtbox/animation handling.
+
+Last updated: 2026-03-26

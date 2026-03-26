@@ -18,8 +18,8 @@ func resolve_combat(attacker: Node, defender: Node, _attack_type: String = "ligh
 	Resolves combat based on attacker and defender states.
 	Returns a dictionary with outcome details.
 	"""
-	var attacker_state = attacker.get_state_name() if attacker.has_method("get_state_name") else "UNKNOWN"
-	var defender_state = defender.get_state_name() if defender.has_method("get_state_name") else "UNKNOWN"
+	var attacker_state = attacker.state_machine.get_state_name() if attacker.has_method("get_state_name") else "UNKNOWN"
+	var defender_state = defender.state_machine.get_state_name() if defender.has_method("get_state_name") else "UNKNOWN"
 
 	var outcome = _calculate_outcome(attacker_state, defender_state, _attack_type)
 	var result = _apply_outcome(attacker, defender, outcome)
