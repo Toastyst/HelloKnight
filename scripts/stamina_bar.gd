@@ -12,21 +12,17 @@ func _ready():
 			_connect_to_entity(player)
 
 func _connect_to_entity(entity: Node):
-	print("StaminaBar: Connecting to entity ", entity.name)
 	if entity.has_signal("stamina_changed"):
 		entity.stamina_changed.connect(_on_stamina_changed)
-		print("StaminaBar: Connected to stamina_changed signal")
 		# Set initial values
 		if "max_stamina" in entity and "current_stamina" in entity:
 			max_value = entity.max_stamina
 			value = entity.current_stamina
-			print("StaminaBar: Set initial values - max: ", max_value, " current: ", value)
 		else:
 			max_value = 100
 			value = 100
-			print("StaminaBar: Using default values")
 	else:
-		print("StaminaBar: Entity has no stamina_changed signal")
+		pass
 
 func _on_stamina_changed(new_stamina: int, max_stamina: int):
 	max_value = max_stamina

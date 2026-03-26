@@ -10,7 +10,7 @@ func _ready():
 	combat_manager = get_tree().get_first_node_in_group("combat_manager")
 	if not combat_manager:
 		# If no CombatManager, create one or find alternative
-		print("Warning: No CombatManager found for hurtbox")
+		pass
 
 	set_deferred("monitoring", true)
 
@@ -33,8 +33,7 @@ func _on_attack_hit(attacker: Node, target: Node, attack_data: Dictionary):
 	if combat_manager and combat_manager.has_method("resolve_combat"):
 		combat_manager.resolve_combat(attacker, owner_entity, attack_data.get("type", "light"))
 	else:
-		# Fallback: direct damage application
-		print("No CombatManager, applying direct damage")
+		# Fallback: direct damage application (should not happen)
 		if owner_entity.has_method("take_damage"):
 			owner_entity.take_damage(attack_data.get("damage", 10))
 

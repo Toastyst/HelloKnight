@@ -13,21 +13,17 @@ func _ready():
 			_connect_to_entity(player)
 
 func _connect_to_entity(entity: Node):
-	print("HealthBar: Connecting to entity ", entity.name)
 	if entity.has_signal("health_changed"):
 		entity.health_changed.connect(_on_health_changed)
-		print("HealthBar: Connected to health_changed signal")
 		# Set initial values
 		if "max_health" in entity and "current_health" in entity:
 			max_value = entity.max_health
 			value = entity.current_health
-			print("HealthBar: Set initial values - max: ", max_value, " current: ", value)
 		else:
 			max_value = 100
 			value = 100
-			print("HealthBar: Using default values")
 	else:
-		print("HealthBar: Entity has no health_changed signal")
+		pass
 
 func _on_health_changed(new_health: int, max_health: int):
 	max_value = max_health

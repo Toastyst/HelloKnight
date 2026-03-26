@@ -1,6 +1,8 @@
 extends Area2D
 
-# Attack metadata - simplified for direct damage
+signal attack_hit(attacker: Node, target: Node, attack_data: Dictionary)
+
+# Attack metadata
 var attack_type: String = "light"  # "light" or "heavy"
 var damage: int = 10  # Base damage
 var attacker: Node = null  # Reference to the attacking entity
@@ -10,7 +12,12 @@ func _ready():
 	# Get reference to parent (usually the player or enemy)
 	attacker = get_parent()
 	# Set damage based on attack type
-	damage = 10 if attack_type == "light" else 20
+	if attack_type == "light":
+		damage = 10
+	elif attack_type == "heavy":
+		damage = 20
+	else:  # enemy
+		damage = 15
 
 	# Connect the area_entered signal
 	area_entered.connect(_on_area_entered)
@@ -18,7 +25,7 @@ func _ready():
 func _on_area_entered(area: Area2D):
 	"""
 	Called when attack hitbox overlaps with a hurtbox.
-	Direct damage call for simplicity - no signals or complex resolution.
+	Emits attack_hit signal for CombatManager resolution.
 	"""
 	if not area:
 		return  # Invalid area
@@ -39,11 +46,11 @@ func _on_area_entered(area: Area2D):
 	if area.get_parent() == attacker:
 		return
 
-	# Direct damage call to the hurtbox owner
+	# Emit signal with attack data
 	var target = area.get_parent()
-	if target.has_method("take_damage"):
-		target.take_damage(damage, attacker)
-		has_hit = true  # Mark as hit to prevent multiple damage
+	var attack_data = {"type": attack_type, "damage": damage}
+	attack_hit.emit(attacker, target, attack_data)
+	has_hit = true  # Mark as hit to prevent multiple damage
 
 func reset_hit():
 	"""

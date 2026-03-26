@@ -25,6 +25,10 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
   - Layer 4: Hurtbox (masks: 5)
   - Layer 5: AttackHitbox (masks: 4, monitoring: false by default)
 
+# Refactoring & Safety
+- **Rule** : "Before changing any function name or signature, use grep or the search tool to find every instance of .connect() or signal emissions (emit_signal or signal_name.emit()) associated with that function. Ensure all connections are updated or verified."
+- **Rule** :"All state transitions and AI logic must reference res://data/states_config.json. Do not hardcode integer IDs or string names for states directly in scripts or LLM prompts."
+
 ## Best Practices
 - **State Machine Patterns**: Group related states for condition checks, centralize transitions in change_state(), match state names to animation names.
 - **Combat Design**: Separate hitboxes from body collision, use i-frames during vulnerable actions, add debug prints during development.

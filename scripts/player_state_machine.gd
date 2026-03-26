@@ -64,6 +64,8 @@ func process_input(input_dir: Vector2, delta: float, is_on_floor: bool, velocity
 
 	return null
 
+signal attack_finished
+
 func handle_animation_finished(state: int):
 	match state:
 		State.ROLL:
@@ -81,6 +83,7 @@ func handle_animation_finished(state: int):
 			attack_hitbox.monitoring = false
 			if attack_hitbox.has_method("reset_hit"):
 				attack_hitbox.reset_hit()
+			attack_finished.emit()
 			# Return to movement
 			var is_on_floor = body.is_on_floor()
 			var velocity = body.velocity
@@ -103,6 +106,10 @@ func change_state(new_state: int):
 		body.set_collision_mask_value(3, false)
 	elif current_state == State.ROLL:
 		body.set_collision_mask_value(3, true)
+
+	# Update attack hitbox damage based on type
+	if attack_hitbox:
+		attack_hitbox.damage = 10 if attack_hitbox.attack_type == "light" else 20
 
 # Override getters
 func get_state_name() -> String:

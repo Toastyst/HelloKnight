@@ -30,13 +30,13 @@ func process_ai(delta: float, player_pos: Vector2, distance: float, can_see: boo
         # Check if reached patrol point
         if abs(body.global_position.x - target_x) < 5 and not idle_timer_active:
             idle_timer_active = true
-            return State.IDLE
             # Longer pause before continuing patrol
             var timer = get_tree().create_timer(2.0)
             timer.timeout.connect(func():
                 idle_timer_active = false
                 moving_right = not moving_right
             )
+            return State.IDLE
 
     # Call super for other logic
     return super(delta, player_pos, distance, can_see)
