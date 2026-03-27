@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const PlayerStateMachine = preload("res://scripts/player_state_machine.gd")
+const StaminaComponent = preload("res://scripts/stamina_component.gd")
 
 @export var speed: float = 60.0
 @export var jump_velocity: float = -180.0
@@ -14,37 +15,31 @@ var current_health: int = max_health
 signal health_changed(new_health: int, max_health: int)
 signal died
 
-# Stamina System
-@export var max_stamina: int = 100
-var current_stamina: int = max_stamina
-@export var stamina_regen_rate: float = 20.0  # Stamina per second
-@export var stamina_regen_delay: float = 2.0  # Seconds before regen starts
-var stamina_regen_timer: Timer = null
-var stamina_exhaustion_timer: Timer = null
+# Stamina System (now handled by StaminaComponent)
+var current_stamina: float = 100
+var max_stamina: int = 100
 signal stamina_changed(new_stamina: int, max_stamina: int)
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var state_machine: PlayerStateMachine
+var stamina_component: StaminaComponent
 
 var facing_dir: int = 1
 var attack_cooldown_timer: Timer = null
 
 func _ready():
-	# Emit initial stamina value
-	stamina_changed.emit(current_stamina, max_stamina)
+	# Get stamina component
+	stamina_component = $StaminaComponent as StaminaComponent
+	if not stamina_component:
+		push_error("StaminaComponent not found. Add a StaminaComponent node as a child of the Player node.")
+		return
 
-	# Setup stamina regeneration timer
-	stamina_regen_timer = Timer.new()
-	stamina_regen_timer.timeout.connect(_on_stamina_regen_tick)
-	add_child(stamina_regen_timer)
-
-	# Setup stamina exhaustion timer (delays regen after use)
-	stamina_exhaustion_timer = Timer.new()
-	stamina_exhaustion_timer.one_shot = true
-	stamina_exhaustion_timer.timeout.connect(_start_stamina_regen)
-	add_child(stamina_exhaustion_timer)
+	# Connect stamina component signals
+	stamina_component.stamina_changed.connect(_on_stamina_changed)
+	stamina_component.exhaustion_entered.connect(_on_exhaustion_entered)
+	stamina_component.exhaustion_exited.connect(_on_exhaustion_exited)
 
 	# Instantiate state machine
 	state_machine = PlayerStateMachine.new()
@@ -60,28 +55,40 @@ func _start_attack_cooldown():
 	attack_cooldown_timer.start(0.3)
 
 func _physics_process(delta):
-	# Gravity
+	if not stamina_component:
+		return
+
+	# DEBUG OVERLAY (Prints to console every frame)
+	print("--- PHYSICS DEBUG ---")
+	print("Current State: ", state_machine.get_state_name())
+	print("Velocity Y: ", velocity.y)
+	print("Is On Floor: ", is_on_floor())
+	
+	# Apply Gravity
 	if not is_on_floor():
 		velocity.y += get_gravity().y * delta
+	elif velocity.y > 0:
+		velocity.y = 0 # Reset downward velocity when hitting floor
 
 	var input_dir = Input.get_axis("move_left", "move_right")
 	var attack_cooldown_stopped = not attack_cooldown_timer or attack_cooldown_timer.is_stopped()
+	var is_exhausted = stamina_component.is_exhausted()
+	var attack_ready = attack_cooldown_stopped
 
 	# Delegate to state_machine
-	var suggested = state_machine.process_input(input_dir, delta, is_on_floor(), velocity, current_stamina, attack_cooldown_stopped)
+	var suggested = state_machine.process_input(input_dir, delta, is_on_floor(), velocity, is_exhausted, attack_ready)
 	if suggested != null:
 		# Handle stamina consumption
 		var can_do = true
 		if suggested == PlayerStateMachine.State.ATTACK_LIGHT:
-			can_do = consume_stamina(15)
+			can_do = stamina_component.consume(15)
 		elif suggested == PlayerStateMachine.State.ATTACK_HEAVY:
-			can_do = consume_stamina(25)
+			can_do = stamina_component.consume(25)
 		elif suggested == PlayerStateMachine.State.ROLL:
-			can_do = consume_stamina(20)
+			can_do = stamina_component.consume(20)
 		if can_do:
-			state_machine.change_state(suggested)
-			# Apply velocity changes
-			if suggested == PlayerStateMachine.State.JUMP:
+			# Apply velocity changes (only on state transition)
+			if suggested == PlayerStateMachine.State.JUMP and state_machine.current_state != PlayerStateMachine.State.JUMP:
 				velocity.y = jump_velocity
 			elif suggested == PlayerStateMachine.State.ROLL:
 				velocity.x = facing_dir * roll_boost
@@ -89,6 +96,7 @@ func _physics_process(delta):
 				velocity.x *= 0.6
 			elif suggested == PlayerStateMachine.State.ATTACK_HEAVY:
 				velocity.x *= 0.4
+			state_machine.change_state(suggested)
 		else:
 			state_machine.change_state(PlayerStateMachine.State.STAMINA)
 
@@ -99,8 +107,11 @@ func _physics_process(delta):
 		if state_machine.current_state == PlayerStateMachine.State.BLOCK:
 			accel *= 0.5
 			fric *= 0.5
+		var current_speed = speed
+		if stamina_component.is_exhausted():
+			current_speed *= 0.5
 		if input_dir != 0:
-			velocity.x = move_toward(velocity.x, input_dir * speed, accel * delta)
+			velocity.x = move_toward(velocity.x, input_dir * current_speed, accel * delta)
 			facing_dir = sign(input_dir)
 			animated_sprite.flip_h = facing_dir < 0
 			# Update attack hitbox position based on facing direction
@@ -110,6 +121,9 @@ func _physics_process(delta):
 					hitbox_shape.position.x = abs(hitbox_shape.position.x) * facing_dir
 		else:
 			velocity.x = move_toward(velocity.x, 0, fric * delta)
+
+	# Set blocking for regen penalty
+	stamina_component.set_blocking(state_machine.current_state == PlayerStateMachine.State.BLOCK)
 
 	move_and_slide()
 
@@ -130,7 +144,7 @@ func take_damage(amount: int, attacker: Node = null):
 	# Blocking reduces damage and drains stamina
 	if state_machine.current_state == PlayerStateMachine.State.BLOCK:
 		amount = amount / 2  # Block reduces damage by half
-		consume_stamina(15)  # Blocking drains 15 stamina
+		stamina_component.consume(15)  # Blocking drains 15 stamina
 
 	current_health = max(0, current_health - amount)
 	health_changed.emit(current_health, max_health)
@@ -207,40 +221,14 @@ func _on_attack_cooldown_finished():
 	pass
 
 # -- STAMINA SYSTEM --
-func consume_stamina(amount: int) -> bool:
-	"""
-	Consume stamina. Returns true if successful, false if insufficient stamina.
-	"""
-	if current_stamina >= amount:
-		current_stamina -= amount
-		stamina_changed.emit(current_stamina, max_stamina)
+func _on_stamina_changed(new_stamina: float, max_stamina_val: int):
+	current_stamina = new_stamina
+	max_stamina = max_stamina_val
+	stamina_changed.emit(new_stamina, max_stamina_val)
 
-		# Stop regeneration and start exhaustion delay
-		stamina_regen_timer.stop()
-		stamina_exhaustion_timer.start(stamina_regen_delay)
-		return true
-	else:
-		# Insufficient stamina - enter STAMINA state
-		state_machine.change_state(PlayerStateMachine.State.STAMINA)
-		return false
+func _on_exhaustion_entered():
+	pass
 
-func _start_stamina_regen():
-	"""
-	Start stamina regeneration after exhaustion delay.
-	"""
-	stamina_regen_timer.start(0.1)  # Tick every 0.1 seconds for smooth regen
-
-func _on_stamina_regen_tick():
-	"""
-	Regenerate stamina over time.
-	"""
-	if current_stamina < max_stamina:
-		current_stamina = min(max_stamina, current_stamina + (stamina_regen_rate * 0.1))
-		stamina_changed.emit(current_stamina, max_stamina)
-
-		# Exit STAMINA state if we have enough stamina
-		if state_machine.current_state == PlayerStateMachine.State.STAMINA and current_stamina >= 20:  # Minimum threshold
-			state_machine.change_state(PlayerStateMachine.State.IDLE)
-	else:
-		# Full stamina - stop regen timer
-		stamina_regen_timer.stop()
+func _on_exhaustion_exited():
+	if state_machine.current_state == PlayerStateMachine.State.STAMINA:
+		state_machine.change_state(PlayerStateMachine.State.IDLE)

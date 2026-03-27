@@ -46,9 +46,21 @@ func _idle_behavior(delta): velocity.x = move_toward(velocity.x, 0, friction)
 - **Solution**: Killzone now calls `body.die()` for proper slow-motion death sequence
 - **Result**: Consistent death handling across fall damage and enemy kills
 
+**Jump Acceleration & State Loop Fix**: Player velocity.y stuck at -180 during JUMP, infinite upward flight
+- **Problem**: State machine re-suggested JUMP every frame (vel.y <= 0), player.gd re-applied jump_velocity unconditionally
+- **Solution**: Aerial auto-transition guards `if aerial_state != current_state`; jump impulse guards `if suggested == JUMP and current_state != JUMP`
+- **Result**: One-shot jump impulse, proper FALL transition
+
+**Enemy Stamina & Animation Stability Fixes**: "Node not found" crashes, "falling up" physics resets
+- **Problem**: Hard $StaminaComponent crashes if missing; play() every frame restarts animations; enable/disable nonexistent functions
+- **Solution**: get_node_or_null() for stamina; play guard `if animation != anim`; replace enable/disable with monitoring = true/false
+- **Result**: Safe enemy initialization, no stutter physics, proper hitbox toggling
+
 ## Current Architecture
 
-### State Machines
+### LLSM Protocol
+**General & Soldier Model**: TinySprite ONNX (General) proposes states/barks from context. enemy_template.gd (Soldier) validates via can_transition_to(), executes via execute_state().
+
 **Player States (11)**: IDLE, RUN, JUMP, FALL, ROLL, ATTACK_LIGHT, ATTACK_HEAVY, BLOCK, STAGGER, HURT, DIE
 **Enemy States (6)**: IDLE, PATROL, CHASE, ATTACK, HURT, DIE
 
@@ -56,6 +68,8 @@ func _idle_behavior(delta): velocity.x = move_toward(velocity.x, 0, friction)
 - ROLL, ATTACK_LIGHT, ATTACK_HEAVY, HURT, DIE
 - **Advantage**: Easy timing tweaks via animation FPS/frames
 - **Consistency**: Multi-hit prevention can use HURT animation length
+
+**Validation Gates**: Stamina >= cost, range in min/max, interruptible or not anim_locked.
 
 **Future States to Plan For**:
 - **STAMINA**: Low stamina state affecting movement/combat
@@ -203,30 +217,11 @@ scenes/
 
 ---
 
-*Last Updated: 2026-03-26*
+*Last Updated: 2026-03-27*
 
-### StateMachine Structure
-**Base Class (state_machine.gd)**:
-- Node extending, manages hurtbox/attackbox monitoring, animation playback.
-- Virtual methods: process(), handle_animation_finished(), getters for states/types.
-- change_state() handles monitoring and animation.
-
-**PlayerStateMachine (player_state_machine.gd)**:
-- Enum: IDLE, RUN, JUMP, FALL, ROLL, ATTACK_LIGHT, ATTACK_HEAVY, BLOCK, STAMINA, STAGGER, HURT, DIE
-- process_input(): Input priority (combat > movement), auto-transitions (landing, air).
-- handle_animation_finished(): Roll/attack/hurt/die transitions, collision for roll.
-
-**EnemyStateMachine (enemy_state_machine.gd)**:
-- Enum: IDLE, PATROL, CHASE, ATTACK, HURT, DIE
-- process_ai(): Detection/transitions, cooldowns.
-- handle_animation_finished(): Attack cooldown, return to chase/idle.
-
-**GruntStateMachine (enemy_grunt_state_machine.gd)**:
-- Extends EnemyStateMachine, adds patrol ping-pong with idle timer.
-- Overrides process_ai() for patrol logic, change_state() for random attack_type.
-
-**Integration**:
-- Base classes (player.gd, enemy_template.gd): Instantiate SM in _ready, delegate process_* in _physics_process, match state for physics/behaviors, delegate combat methods.
-- Subclasses (enemy_grunt.gd): Override SM type, keep specific behaviors (_chase_behavior for jump).
+### Legacy Cleanup
+- Extract animation/hitbox logic from legacy StateMachine scripts to execute_state() in enemy_template.gd.
+- Delete: scripts/state_machine.gd, scripts/enemy_state_machine.gd, scripts/enemy_grunt_state_machine.gd (after verification no refs remain).
+- Verify: No state_machine calls/signals post-cleanup.
 
 *Keep this file current with project evolution*

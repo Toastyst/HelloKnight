@@ -12,13 +12,13 @@ const ANIM_MAP = {
 	State.IDLE: "idle",
 	State.RUN: "run",
 	State.JUMP: "jump",
-	State.FALL: "jump",
+	State.FALL: "fall",
 	State.ROLL: "roll",
 	State.ATTACK_LIGHT: "attack",
 	State.ATTACK_HEAVY: "attack",
-	State.BLOCK: "idle",
-	State.STAMINA: "idle",
-	State.STAGGER: "idle",
+	State.BLOCK: "block",
+	State.STAMINA: "exhausted",
+	State.STAGGER: "stagger",
 	State.HURT: "hurt",
 	State.DIE: "die"
 }
@@ -27,16 +27,20 @@ func _ready():
 	super()
 	current_state = State.IDLE
 
-func process_input(input_dir: Vector2, delta: float, is_on_floor: bool, velocity: Vector2, current_stamina: int, attack_cooldown_stopped: bool) -> Variant:
+func process_input(input_dir: float, delta: float, is_on_floor: bool, vel: Vector2, is_exhausted: bool, attack_ready: bool) -> Variant:
 	# If dead, no process
 	if current_state == State.DIE: return null
+
+	# Exhaustion lock
+	if is_exhausted and (Input.is_action_just_pressed("roll") or Input.is_action_just_pressed("attack_heavy")):
+		return null
 
 	# Landing auto-roll
 	if is_on_floor and current_state in [State.JUMP, State.FALL]:
 		if Input.is_action_pressed("roll"):
 			return State.ROLL
 		else:
-			return State.RUN if abs(velocity.x) > 20 else State.IDLE
+			return State.RUN if abs(vel.x) > 20 else State.IDLE
 
 	# Combat inputs (highest priority)
 	if current_state in VULNERABLE_STATES or current_state == State.BLOCK:
@@ -44,23 +48,25 @@ func process_input(input_dir: Vector2, delta: float, is_on_floor: bool, velocity
 			return State.BLOCK
 		elif current_state == State.BLOCK and not Input.is_action_pressed("block"):
 			return State.IDLE
-		elif Input.is_action_just_pressed("attack_light") and current_stamina >= 15 and attack_cooldown_stopped:
+		elif Input.is_action_just_pressed("attack_light") and attack_ready:
 			return State.ATTACK_LIGHT
-		elif Input.is_action_just_pressed("attack_heavy") and current_stamina >= 25 and attack_cooldown_stopped:
+		elif Input.is_action_just_pressed("attack_heavy") and attack_ready:
 			return State.ATTACK_HEAVY
 
 	# Movement inputs
 	if current_state not in ACTION_STATES and current_state != State.BLOCK:
 		if Input.is_action_just_pressed("jump") and is_on_floor:
 			return State.JUMP
-		if Input.is_action_just_pressed("roll") and is_on_floor and current_stamina >= 20:
+		if Input.is_action_just_pressed("roll") and is_on_floor:
 			return State.ROLL
 
 	# Auto transitions
 	if is_on_floor and current_state in MOVEMENT_STATES:
-		return State.RUN if abs(velocity.x) > 20 else State.IDLE
+		return State.RUN if abs(vel.x) > 20 else State.IDLE
 	elif not is_on_floor and current_state in MOVEMENT_STATES:
-		return State.FALL if velocity.y > 0 else State.JUMP
+		var aerial_state = State.FALL if vel.y > 0 else State.JUMP
+		if aerial_state != current_state:
+			return aerial_state
 
 	return null
 

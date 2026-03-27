@@ -95,6 +95,12 @@
 		Block: 15 stamina drain while held
 		Regeneration: 20/sec after 2-second delay
 		Low stamina affects movement/combat (future feature)
+
+		Stamina System Expansion:
+		Implement Negative Stamina. Actions can be taken at >0 stamina even if the cost exceeds the current amount, going negative up to -50.
+		Add Exhaustion State: Triggered at <=0 stamina. Movement speed is halved, and the player/AI cannot perform Heavy Attacks or Dodge.
+		Recovery Threshold: Exhaustion only ends once stamina regens to +20.
+		Blocking Penalty: Regeneration speed is reduced by 80% (0.2x multiplier) while guarding.
 	Health & Healing
 		Health bar
 		Limited healing uses per checkpoint
@@ -109,6 +115,11 @@
 		Attack Anticipation: Read enemy telegraphs for counter opportunities
 		Combo Potential: Chain attacks for damage bonuses (future feature)
 
+		Poise & Stagger Table:
+		Grunts/Ranged: Stagger on 1 Light Hit.
+		Tanks/Elites: Stagger on 3 Light Hits or 1 Heavy Hit.
+		Knockdown: Heavy hits from Elites/Bosses or ANY hit taken while Exhausted triggers a full Knockdown state with I-frames on the "Get Up" animation.
+
 5. Death System
 	Core Souls-like mechanic.
 	Player drops currency on death
@@ -116,6 +127,10 @@
 	Death spot marked
 	Currency recoverable once
 	Second death loses it permanently
+
+	Bark System (Rarity Logic):
+	Enemies roll once for a bark upon entering a state (Idle, Spotted, Exhausted, Knockdown).
+	Rarity Promotion: Apply an offset based on Enemy Type (Grunt +0, Tank +1, Elite +2, Boss +2). If a high-tier enemy rolls a "Common" (White) bark, it must be promoted to the next available tier (Uncommon/Rare/Legendary).
 
 6. Progression System
 	Currency Used for:

@@ -5,6 +5,8 @@
 [ext_resource type="Script" uid="uid://dhxcxjfewqmbd" path="res://scripts/hurtbox.gd" id="3_6xajn"]
 [ext_resource type="Texture2D" uid="uid://cwdkskhqftytg" path="res://assets/sprites/combined_goblin_sheet (2).png" id="3_avgkm"]
 [ext_resource type="Script" uid="uid://bxlammpbb5dxd" path="res://scripts/attack_hitbox.gd" id="4_764eg"]
+[ext_resource type="Script" uid="uid://bpp1wt2kqqful" path="res://scripts/stamina_component.gd" id="5_stam"]
+[ext_resource type="Script" uid="uid://bny36a47ygnht" path="res://scripts/enemy_bark_manager.gd" id="6_bark"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b7jfr"]
 atlas = ExtResource("2_4awob")
@@ -279,3 +281,14 @@ visible = false
 position = Vector2(5, 3)
 shape = SubResource("RectangleShape2D_w1git")
 debug_color = Color(0.9771736, 0, 0.40983668, 0.41960785)
+
+[node name="StaminaComponent" type="Node2D" parent="." id=7]
+script = ExtResource("5_stam")
+
+[node name="BarkManager" type="Node2D" parent="." id=8]
+script = ExtResource("6_bark")
+
+[node name="BarkTimer" type="Timer" parent="." id=9]
+
+[node name="BarkLabel" type="Label" parent="." id=10]
+z_index = 10
