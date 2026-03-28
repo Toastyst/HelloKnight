@@ -120,6 +120,25 @@
 		Tanks/Elites: Stagger on 3 Light Hits or 1 Heavy Hit.
 		Knockdown: Heavy hits from Elites/Bosses or ANY hit taken while Exhausted triggers a full Knockdown state with I-frames on the "Get Up" animation.
 
+## Technical Architecture (Stable Baseline)
+
+### Physics-State Synchronization Protocol
+**One-Shot Transitions**: Physics impulses (jump_velocity, roll_boost) applied once during state change, not every frame, to prevent infinite acceleration.
+
+**Animation Guards**: Mandatory `if animated_sprite.animation != anim: animated_sprite.play(anim)` in Player/Enemy templates to prevent per-frame physics resets.
+
+**Gravity Priority**: `velocity.y += gravity * delta` remains unencumbered by state logic for consistent grounding.
+
+### Component-Based Architecture (The "Organ" System)
+**StaminaComponent**: Mandatory child node for combatants, handling stamina logic.
+
+**Safety Guards**: Standard `get_node_or_null()` and `if not stamina_component: return` in `_physics_process` to prevent Nil crashes.
+
+### Combat Interaction Logic
+**Hitbox Standards**: Toggled via `.monitoring = true/false` property, not custom `.enable()/.disable()`.
+
+**State-Entry Execution**: Hitbox toggling and damage scaling (Heavy Attack 1.5x) nested in `current_state != state` block for performance.
+
 5. Death System
 	Core Souls-like mechanic.
 	Player drops currency on death
@@ -276,7 +295,7 @@
 
 Completion Criteria
 
-Game is “done” when:
+Game is "done" when:
 
 	☐ Playable start to finish
 	☐ All bosses implemented
@@ -284,6 +303,8 @@ Game is “done” when:
 	☐ Menus functional
 	☐ Credits screen added
 	☐ Stable build ready
+
+Current Project Status: Physics-to-Animation Audit passed, Stable Baseline achieved.
 
 18. Unique Selling Points (USP)
 	What makes THIS game worth buying?

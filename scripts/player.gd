@@ -58,12 +58,6 @@ func _physics_process(delta):
 	if not stamina_component:
 		return
 
-	# DEBUG OVERLAY (Prints to console every frame)
-	print("--- PHYSICS DEBUG ---")
-	print("Current State: ", state_machine.get_state_name())
-	print("Velocity Y: ", velocity.y)
-	print("Is On Floor: ", is_on_floor())
-	
 	# Apply Gravity
 	if not is_on_floor():
 		velocity.y += get_gravity().y * delta
