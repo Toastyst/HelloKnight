@@ -1,48 +1,42 @@
 # HelloKnight Project — Central Index
 
-**Last Updated:** March 27, 2026  
-**Purpose:** Single source of truth. All design docs and latest files now live in local projects/repos.
+**Last Updated:** March 28, 2026  
+**Purpose:** Single source of truth for the entire ecosystem. All design docs, decisions, and latest files live in GitHub.
 
-## Active Projects/Tools
+## Active Repositories (6)
 
-### 1. SfxClanker (Sound Tool)
-**Repo:** ../../VSCode Projects/SFXClanker  
-**Main Design Doc:** [sfxClanker.design.md](../../VSCode Projects/SFXClanker/sfxClanker.design.md)  
-**Latest Code:** sfxClanker.py + utils/ folder
+### 1. HelloKnight (The Game)
+**Repo:** https://github.com/Toastyst/HelloKnight  
+**Main Design Doc:** HelloKnight_Design_Doc.md  
+**Key Files:** implementation_plan.md, ROOT.clinerules, README_CLINE.md
 
-### 2. SpriteClanker (GoblinAnimationCompleter)
-**Repo:** ../../VSCode Projects/GoblinAnimationCompleter  
-**Main Design Doc:** [GoblinAnimationCompleter_Design_Doc.md](../../VSCode Projects/GoblinAnimationCompleter/GoblinAnimationCompleter_Design_Doc.md)  
-**Latest Code:** GoblinAnimationCompleter.html + js/ modules
+### 2. SfxClanker (Sound Tool)
+**Repo:** https://github.com/Toastyst/SfxClanker  
+**Main Design Doc:** sfxClanker.design.md
 
-### 3. HelloKnight (The Game)
-**Repo:** . (current)  
-**Main Design Doc:** [HelloKnight_Design_Doc.md](HelloKnight_Design_Doc.md)  
-**Godot Project Files:** project.godot + scripts/scenes/
+### 3. GoblinAnimationCompleter (SpriteClanker)
+**Repo:** https://github.com/Toastyst/GoblinAnimationCompleter  
+**Main Design Doc:** GoblinAnimationCompleter_Design_Doc.md  
+**Note:** Previously archived — now active.
 
-### 4. Tools (MicroSprite/TinySprite)
-**Repo:** tools/  
-**MicroSprite Doc:** [Micro_Sprite_Design_Doc.md](tools/MicroSprite/Micro_Sprite_Design_Doc.md)  
-**TinySprite Doc:** [design_doc.md](tools/TinySprite/design_doc.md)
+### 4. SpriteClanker
+**Repo:** https://github.com/Toastyst/SpriteClanker  
+**Main Design Doc:** (none yet — create if needed)
 
-### 5. GrokSpriteForge (Sprite Generation Tool)
-**Repo:** ../../VSCode Projects/GrokSpriteForge/  
-**Main Design Doc:** [Design_doc.md](../../VSCode Projects/GrokSpriteForge/Design_doc.md)  
-**Latest Code:** GrokSpriteForge.html
+### 5. Toastoid-media-stack
+**Repo:** https://github.com/Toastyst/Toastoid-media-stack  
+**Purpose:** Jellyfin + *arr + homepage docker stack
 
-## Cline Rules (.clinerules)
-- [ROOT.clinerules](../ROOT.clinerules)
-- [.clinerules](.clinerules)
-- [tools.clinerules](../../VSCode Projects/tools.clinerules)
+### 6. PROJECT-GHOST-PROTOCOL
+**Repo:** https://github.com/Toastyst/PROJECT-GHOST-PROTOCOL  
+**Purpose:** Python project (details in repo)
 
 ## Master Decisions (Cross-Project)
-**File:** [project_decisions.md](../../VSCode Projects/SFXClanker/docs/project_decisions.md)
+**File:** project_decisions.md (in HelloKnight repo)  
+Contains all unification logs, Cline housekeeping, git decisions, and rollback notes.
 
 ---
 
-**How to Use This Index**  
-- Always reference this file first in any new chat.  
-- Cline & Grok: Pull latest design docs and code from the linked local paths/repos.  
-- For any new decisions, add them to project_decisions.md and update this index.
-
-This replaces all previous local design docs in Sources. Everything is now centralized and version-controlled locally.
+**How to Use This Index**   
+- This replaces all previous local indexes and grok_project_index.md.  
+- For new decisions → add to project_decisions.md and update this file’s Last Updated date.
