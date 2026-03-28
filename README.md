@@ -30,7 +30,10 @@ A 2D action RPG/Souls-like game built in Godot 4. Experience methodical combat, 
 - **Light Attack**: Left Mouse Button (costs 15 stamina)
 - **Heavy Attack**: Right Mouse Button (costs 25 stamina)
 
+
 ## Core Mechanics
+
+
 
 ### Combat System
 - **Stamina Costs**: Light (15), Heavy (25), Roll (20), Block (15/sec)
