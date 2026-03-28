@@ -72,4 +72,18 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
 - Delete: scripts/state_machine.gd, scripts/enemy_state_machine.gd, scripts/enemy_grunt_state_machine.gd (after verification no refs remain).
 - Verify: No state_machine calls/signals post-cleanup.
 
-Last updated: 2026-03-26
+## Dev Workflow Rules
+- Plan: Update .clinerules with features/decisions
+- Implement: Follow established patterns (state machine, signals)
+- Test: Debug prints, collision layers
+- Document: Add lessons here
+- Iterate: Small changes
+
+## Future States
+- STAMINA, BLOCK_STAMINA, CLIMB, SWIM
+
+## Status v0.1
+- Core states/combat complete, GitHub pushed
+- Combat testing/balancing next
+
+Last updated: 2026-03-27
