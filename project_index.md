@@ -27,9 +27,7 @@
 **Repo:** https://github.com/Toastyst/Toastoid-media-stack  
 **Purpose:** Jellyfin + *arr + homepage docker stack
 
-### 6. PROJECT-GHOST-PROTOCOL
-**Repo:** https://github.com/Toastyst/PROJECT-GHOST-PROTOCOL  
-**Purpose:** Python project (details in repo)
+
 
 ## Master Decisions (Cross-Project)
 **File:** project_decisions.md (in HelloKnight repo)  

@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dhxcxjfewqmbd" path="res://scripts/hurtbox.gd" id="3_dqkch"]
 [ext_resource type="Script" uid="uid://bxlammpbb5dxd" path="res://scripts/attack_hitbox.gd" id="3_qhqgy"]
 [ext_resource type="Texture2D" uid="uid://cddgrxphlkie1" path="res://assets/sprites/characters/combined_goblin_sheet_RELOADED (16).png" id="3_to5fm"]
-[ext_resource type="Script" uid="uid://bpp1wt2kqqful" path="res://scripts/stamina_component.gd" id="5_stam"]
+[ext_resource type="Script" path="res://scripts/stamina_component.gd" id="5_stam"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ijkqn"]
 atlas = ExtResource("2_gchoq")
