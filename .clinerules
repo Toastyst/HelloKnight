@@ -10,9 +10,13 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
 - **Test early**: Validate mechanics before adding features
 
 ## Critical Lessons Learned
-- **State Machine Structural Breakdowns**: Base class state behaviors that automatically transition states can conflict with subclass logic. Base classes should handle movement/physics only; subclasses control state transitions and timing.
 - **Multi-Hit Prevention**: Attack hitboxes were causing multiple damage per attack. Solution: Added `has_hit` flag to attack_hitbox, reset on animation finish.
 - **Killzone Death State**: Killzone bypassed proper death handling. Solution: Killzone now calls `body.die()` for proper slow-motion death sequence.
+- **Godot**: Always use the ls or read_file tool on the relevant .tscn file before implementing logic that relies on get_node() or $ shorthand.
+- **One-Shot Protection**: Jump/roll/attacks were overridden immediately by CHASE/IDLE. Solution: `if not anim_locked and use_llsm:` to skip LLSM during locked animations, `anim_locked = true` for one-shot states, reset on animation_finished.
+- **Air Control**: Jump had no horizontal movement. Solution: Allow movement in JUMP/FALL states with `current_accel *= 0.6` for 60% air control (floaty but responsive).
+- **LLSM Integration**: Player auto-blocking near enemies. Solution: Override `if proposed in ["BLOCK"] and not Input.is_action_pressed("block"): proposed = "IDLE"`
+- **Debug Spam**: Console flooded every frame. Solution: Comment physics debug, make DEBUG INPUTS conditional on change, move bark/hitbox prints to always fire on state change.
 
 ## Current Architecture
 - **Player States (11)**: IDLE, RUN, JUMP, FALL, ROLL, ATTACK_LIGHT, ATTACK_HEAVY, BLOCK, STAGGER, HURT, DIE
@@ -25,20 +29,35 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
   - Layer 4: Hurtbox (masks: 5)
   - Layer 5: AttackHitbox (masks: 4, monitoring: false by default)
 
-# Refactoring & Safety
-- **Rule** : "Before changing any function name or signature, use grep or the search tool to find every instance of .connect() or signal emissions (emit_signal or signal_name.emit()) associated with that function. Ensure all connections are updated or verified."
-- **Rule** :"All state transitions and AI logic must reference res://data/states_config.json. Do not hardcode integer IDs or string names for states directly in scripts or LLM prompts."
+## General & Soldier Philosophy
+- **General** (TinySprite ONNX model via scripts/llsm.gd): Proposes high-level states and barks from categorical context (character_type, interaction_type, context_state).
+- **Soldier** (scripts/enemy_template.gd): Validates proposals via `can_transition_to()`, executes via `execute_state()`, handles physics/stamina/range/animation locks.
+
+## Validation Gates
+- **Stamina**: `current_stamina >= state.stamina_cost` (regen in _physics_process)
+- **Range**: `distance_to_player in [state.range_min, state.range_max]`
+- **Interruptible**: `state.interruptible == true` or current state allows
+- **Animation Locks**: No overlapping animations (track via anim_finished signals)
+- Fallback: Deny -> IDLE
+
+## Data Integrity (JSON)
+- `data/states_config.json` is source of truth for all states (id, name, stamina_cost, range_min/max, interruptible, animation).
+- **Rule**: No hardcoded state IDs/names in GDScript, signals, or LLM prompts. Always reference JSON.
+
+## Refactoring & Safety
+- **Rule**: Before changing function names/signatures, search for .connect() / emit_signal() instances and update.
+- **Rule**: All state transitions/AI reference states_config.json.
 
 ## Best Practices
-- **State Machine Patterns**: Group related states for condition checks, centralize transitions in change_state(), match state names to animation names.
-- **Combat Design**: Separate hitboxes from body collision, use i-frames during vulnerable actions, add debug prints during development.
-- **Code Organization**: One primary responsibility per script, use signals for decoupling, define state arrays at top of scripts.
-- **Debugging**: Isolate systems, add prints for state changes, verify collision layers.
+- **Combat Design**: Separate hitboxes from body collision, i-frames on vulnerable actions, debug prints.
+- **Code Organization**: One responsibility per script, signals for decoupling.
+- **Debugging**: Isolate systems, print state changes, verify collision layers.
 
 ## File Structure
 - scripts/: Core game logic (player.gd, enemy_template.gd, combat_manager.gd, etc.)
 - scenes/: Game scenes and prefabs
 - assets/: Sprites, sounds, music
+- data/: states_config.json
 
 ## Workflow
 1. Plan updates in CLINE.md
@@ -52,12 +71,24 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
 - Enemy Assets: Snoblin pack for main enemies
 - Animation Limits: Most enemies have limited animations - plan for sprite shaking/polish
 
-## StateMachine Pattern Implementation (2026-03-26)
-Successfully refactored state machines to resolve structural breakdowns where base class automatic transitions conflicted with subclass logic. Key improvements:
-- **Separation of Concerns**: Base classes (player.gd, enemy_template.gd) handle physics/movement only; dedicated StateMachine subclasses control state transitions, behaviors, and timing.
-- **Modular Architecture**: StateMachine base class with virtual methods; PlayerStateMachine/EnemyStateMachine/GruntStateMachine extend for specific logic.
-- **Decoupling**: Signals (state_changed) for UI/debug updates; no direct dependencies between physics and state logic.
-- **Extensibility**: Easy to add new states/behaviors without modifying base physics code.
-- **Lessons Learned**: Avoid automatic transitions in base classes; use process_* methods for input/AI delegation; centralize change_state for collision/hurtbox/animation handling.
+## Legacy Cleanup
+- Extract animation/hitbox/transition logic from legacy StateMachine scripts to execute_state() in enemy_template.gd.
+- Delete: scripts/state_machine.gd, scripts/enemy_state_machine.gd, scripts/enemy_grunt_state_machine.gd (after verification no refs remain).
+- Verify: No state_machine calls/signals post-cleanup.
 
-Last updated: 2026-03-26
+## Dev Workflow Rules
+- Plan: Update .clinerules with features/decisions
+- Implement: Follow established patterns (state machine, signals)
+- Test: Debug prints, collision layers
+- Document: Add lessons here
+- Iterate: Small changes
+
+## Future States
+- STAMINA, BLOCK_STAMINA, CLIMB, SWIM
+
+## Status v0.2
+- Player controls complete: LLSM integration, air control, one-shot protection, debug cleanup
+- Enemy AI ready for expansion
+- Ready for playtesting and balancing
+
+Last updated: 2026-03-29

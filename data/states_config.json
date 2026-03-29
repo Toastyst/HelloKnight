@@ -1,0 +1,17 @@
+{
+  "IDLE": { "id": 0, "stamina_cost": 0, "range_min": 0, "range_max": 999, "interruptible": true, "animation": "idle" },
+  "RUN": { "id": 1, "stamina_cost": 5, "range_min": 0, "range_max": 999, "interruptible": true, "animation": "run" },
+  "JUMP": { "id": 2, "stamina_cost": 10, "range_min": 0, "range_max": 999, "interruptible": false, "animation": "jump" },
+  "FALL": { "id": 3, "stamina_cost": 0, "range_min": 0, "range_max": 999, "interruptible": false, "animation": "fall" },
+  "ROLL": { "id": 4, "stamina_cost": 20, "range_min": 0, "range_max": 999, "interruptible": false, "animation": "roll" },
+  "LIGHT_ATTACK": { "id": 5, "stamina_cost": 15, "range_min": 0, "range_max": 50, "interruptible": false, "animation": "light_attack" },
+  "HEAVY_ATTACK": { "id": 6, "stamina_cost": 25, "range_min": 0, "range_max": 50, "interruptible": false, "animation": "heavy_attack" },
+  "BLOCK": { "id": 7, "stamina_cost": 5, "range_min": 0, "range_max": 999, "interruptible": true, "animation": "block" },
+  "PARRY": { "id": 8, "stamina_cost": 10, "range_min": 0, "range_max": 999, "interruptible": true, "animation": "parry" },
+  "STAGGER": { "id": 9, "stamina_cost": 0, "range_min": 0, "range_max": 999, "interruptible": false, "animation": "stagger" },
+  "PATROL": { "id": 10, "stamina_cost": 5, "range_min": 0, "range_max": 999, "interruptible": true, "animation": "walk" },
+  "CHASE": { "id": 11, "stamina_cost": 10, "range_min": 50, "range_max": 999, "interruptible": true, "animation": "run" },
+  "ATTACK": { "id": 12, "stamina_cost": 30, "range_min": 0, "range_max": 40, "interruptible": false, "animation": "attack" },
+  "HURT": { "id": 13, "stamina_cost": 0, "range_min": 0, "range_max": 999, "interruptible": false, "animation": "hurt" },
+  "DIE": { "id": 14, "stamina_cost": 0, "range_min": 0, "range_max": 999, "interruptible": false, "animation": "death" }
+}

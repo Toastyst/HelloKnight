@@ -1,4 +1,4 @@
-	--GAME DESIGN DOCUMENT — SOLO 2D SOULS-LIKE--
+--GAME DESIGN DOCUMENT — SOLO 2D SOULS-LIKE--
 
 
 
@@ -95,6 +95,12 @@
 		Block: 15 stamina drain while held
 		Regeneration: 20/sec after 2-second delay
 		Low stamina affects movement/combat (future feature)
+
+		Stamina System Expansion:
+		Implement Negative Stamina. Actions can be taken at >0 stamina even if the cost exceeds the current amount, going negative up to -50.
+		Add Exhaustion State: Triggered at <=0 stamina. Movement speed is halved, and the player/AI cannot perform Heavy Attacks or Dodge.
+		Recovery Threshold: Exhaustion only ends once stamina regens to +20.
+		Blocking Penalty: Regeneration speed is reduced by 80% (0.2x multiplier) while guarding.
 	Health & Healing
 		Health bar
 		Limited healing uses per checkpoint
@@ -109,6 +115,48 @@
 		Attack Anticipation: Read enemy telegraphs for counter opportunities
 		Combo Potential: Chain attacks for damage bonuses (future feature)
 
+		Poise & Stagger Table:
+		Grunts/Ranged: Stagger on 1 Light Hit.
+		Tanks/Elites: Stagger on 3 Light Hits or 1 Heavy Hit.
+		Knockdown: Heavy hits from Elites/Bosses or ANY hit taken while Exhausted triggers a full Knockdown state with I-frames on the "Get Up" animation.
+
+## Technical Architecture (Stable Baseline)
+
+### Physics-State Synchronization Protocol
+**One-Shot Transitions**: Physics impulses (jump_velocity, roll_boost) applied once during state change, not every frame, to prevent infinite acceleration.
+
+**Animation Guards**: Mandatory `if animated_sprite.animation != anim: animated_sprite.play(anim)` in Player/Enemy templates to prevent per-frame physics resets.
+
+**Gravity Priority**: `velocity.y += gravity * delta` remains unencumbered by state logic for consistent grounding.
+
+### Component-Based Architecture (The "Organ" System)
+**StaminaComponent**: Mandatory child node for combatants, handling stamina logic.
+
+**Safety Guards**: Standard `get_node_or_null()` and `if not stamina_component: return` in `_physics_process` to prevent Nil crashes.
+
+### General & Soldier Pattern (LLSM)
+**General**: llsm.gd proposes state/bark via mock rules (future ONNX), sourced from data/states_config.json.
+
+**Soldier**: Physical bodies (player.gd, enemy_template.gd) validate proposed states (stamina >= cost, range_min/max, interruptible) and execute.
+
+**LLSM Details**:
+
+- propose_state(input: Dictionary) -> {"proposed_state": String, "bark": String}
+
+- Input: Categorical (Character_Type: "PLAYER"|"GRUNT", Interaction_Type: "IDLE"|"ATTACK_RANGE", Context_State: "LOW_STAMINA"|"HEALTHY")
+
+- JSON Source: data/states_config.json (stamina_cost, range_min/max, interruptible, anim)
+
+- Validation: can_transition_to(proposed_state) in soldier bodies
+
+### Combat Interaction Logic
+**Hitbox Standards**: Toggled via `.monitoring = true/false` property, not custom `.enable()/.disable()`.
+
+**State-Entry Execution**: Hitbox toggling and damage scaling (Heavy Attack 1.5x) nested in `current_state != state` block for performance.
+
+### Legacy Cleanup
+**Fully removed – LLSM is now the only state system.**
+
 5. Death System
 	Core Souls-like mechanic.
 	Player drops currency on death
@@ -116,6 +164,10 @@
 	Death spot marked
 	Currency recoverable once
 	Second death loses it permanently
+
+	Bark System (Rarity Logic):
+	Enemies roll once for a bark upon entering a state (Idle, Spotted, Exhausted, Knockdown).
+	Rarity Promotion: Apply an offset based on Enemy Type (Grunt +0, Tank +1, Elite +2, Boss +2). If a high-tier enemy rolls a "Common" (White) bark, it must be promoted to the next available tier (Uncommon/Rare/Legendary).
 
 6. Progression System
 	Currency Used for:
@@ -261,7 +313,7 @@
 
 Completion Criteria
 
-Game is “done” when:
+Game is "done" when:
 
 	☐ Playable start to finish
 	☐ All bosses implemented
@@ -269,6 +321,8 @@ Game is “done” when:
 	☐ Menus functional
 	☐ Credits screen added
 	☐ Stable build ready
+
+Current Project Status: Physics-to-animation audit passed, no upward-acceleration or Nil-reference crashes. Stable Baseline + LLSM Architecture achieved.
 
 18. Unique Selling Points (USP)
 	What makes THIS game worth buying?

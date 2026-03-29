@@ -1,0 +1,6 @@
+{
+  "COMMON": ["Intruder!", "Die!", "Halt!"],
+  "UNCOMMON": ["You dare?", "Foolish!", "Prepare!"],
+  "RARE": ["Your end is near!", "Witness my power!", "Fall!"],
+  "LEGENDARY": ["This is your reckoning!", "Bow before me!", "Perish!"]
+}
