@@ -203,6 +203,7 @@ tile_set = SubResource("TileSet_0tnpc")
 position = Vector2(-58, 8)
 
 [node name="Label" type="Label" parent="." unique_id=1461433769]
+texture_filter = 1
 offset_left = 461.0
 offset_top = -37.0
 offset_right = 1125.0

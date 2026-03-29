@@ -1,19 +1,12 @@
 extends CharacterBody2D
 # Base template for combat enemies
 # Provides health, states, and basic combat functionality
-
-const LLSM = preload("res://scripts/llsm.gd")
-const StaminaComponent = preload("res://scripts/stamina_component.gd")
-const EnemyBarkManager = preload("res://scripts/enemy_bark_manager.gd")
-
 # Health System
 @export var max_health: int = 50
 var current_health: int = max_health
 signal health_changed(new_health: int, max_health: int)
 signal died
-
 # Stamina System (handled by StaminaComponent)
-
 # Combat properties
 @export var damage: int = 10
 @export var attack_range: float = 15.0
@@ -23,11 +16,13 @@ signal died
 @export var poise_max: int = 1
 var poise_health: int = 1
 
+var anim_locked: bool = false
+var current_state: String = "IDLE"
+
 # LLSM Protocol
 @export var character_type: String = "GRUNT"
-@onready var llsm: LLSM = LLSM.new()
-var current_state: String = "IDLE"
-var anim_locked: bool = false
+@onready var llsm = get_node("/root/llsm")
+var use_llsm: bool = true
 
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -54,9 +49,7 @@ func _ready():
 
 	set_collision_mask_value(3, true)
 
-	# Instantiate LLSM
-	add_child(llsm)
-	llsm.load_states("res://data/states_config.json")
+
 
 	# Connect animation finished
 	if animated_sprite:
@@ -83,6 +76,8 @@ func _ready():
 		push_error("StaminaComponent not found. Add a StaminaComponent node as a child of the Enemy node.")
 		return
 
+	llsm.load_states("res://data/states_config.json")
+
 func _physics_process(delta: float):
 	if not stamina_component:
 		return
@@ -91,13 +86,17 @@ func _physics_process(delta: float):
 
 	velocity.y += gravity * delta
 
-	# LLSM Protocol: Propose and validate
-	var input = pack_context()
-	var output = llsm.propose_state(input)
-	var proposed = output.proposed_state
-	if can_transition_to(proposed):
-		execute_state(proposed, output.bark)
+	if use_llsm:
+		# LLSM Protocol: Propose and validate
+		var input = pack_context()
+		var output = llsm.propose_state(input)
+		var proposed = output.proposed_state
+		if can_transition_to(proposed):
+			execute_state(proposed, output.bark)
+		else:
+			execute_state("IDLE")
 	else:
+		# Fallback
 		execute_state("IDLE")
 
 	# Behaviors based on current state
@@ -147,7 +146,7 @@ func _idle_behavior(_delta: float):
 	# Base behavior: just stop moving, let subclasses decide transitions
 	velocity.x = move_toward(velocity.x, 0, 200 * _delta)
 
-func _patrol_behavior(delta: float):
+func _patrol_behavior(_delta: float):
 	# Default: simple patrol logic - override in subclasses
 	pass
 
@@ -165,7 +164,7 @@ func _chase_behavior(delta: float, distance: float):
 		# SM will handle transition to PATROL
 		pass
 
-func _attack_behavior(delta: float):
+func _attack_behavior(_delta: float):
 	# Basic attack - override for specific attack patterns
 	pass
 

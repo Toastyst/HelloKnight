@@ -1,4 +1,4 @@
-	--GAME DESIGN DOCUMENT — SOLO 2D SOULS-LIKE--
+--GAME DESIGN DOCUMENT — SOLO 2D SOULS-LIKE--
 
 
 
@@ -134,10 +134,28 @@
 
 **Safety Guards**: Standard `get_node_or_null()` and `if not stamina_component: return` in `_physics_process` to prevent Nil crashes.
 
+### General & Soldier Pattern (LLSM)
+**General**: llsm.gd proposes state/bark via mock rules (future ONNX), sourced from data/states_config.json.
+
+**Soldier**: Physical bodies (player.gd, enemy_template.gd) validate proposed states (stamina >= cost, range_min/max, interruptible) and execute.
+
+**LLSM Details**:
+
+- propose_state(input: Dictionary) -> {"proposed_state": String, "bark": String}
+
+- Input: Categorical (Character_Type: "PLAYER"|"GRUNT", Interaction_Type: "IDLE"|"ATTACK_RANGE", Context_State: "LOW_STAMINA"|"HEALTHY")
+
+- JSON Source: data/states_config.json (stamina_cost, range_min/max, interruptible, anim)
+
+- Validation: can_transition_to(proposed_state) in soldier bodies
+
 ### Combat Interaction Logic
 **Hitbox Standards**: Toggled via `.monitoring = true/false` property, not custom `.enable()/.disable()`.
 
 **State-Entry Execution**: Hitbox toggling and damage scaling (Heavy Attack 1.5x) nested in `current_state != state` block for performance.
+
+### Legacy Cleanup
+**Fully removed – LLSM is now the only state system.**
 
 5. Death System
 	Core Souls-like mechanic.
@@ -304,7 +322,7 @@ Game is "done" when:
 	☐ Credits screen added
 	☐ Stable build ready
 
-Current Project Status: Physics-to-Animation Audit passed, Stable Baseline achieved.
+Current Project Status: Physics-to-animation audit passed, no upward-acceleration or Nil-reference crashes. Stable Baseline + LLSM Architecture achieved.
 
 18. Unique Selling Points (USP)
 	What makes THIS game worth buying?

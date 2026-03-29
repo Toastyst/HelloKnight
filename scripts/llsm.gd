@@ -44,7 +44,16 @@ func propose_state(input: Dictionary) -> Dictionary:
 		bark = "Can't move..."
 	else:
 		# Normal rules
-		if interaction == "ATTACK_RANGE":
+		if interaction == "JUMP":
+			proposed_state = "JUMP"
+			bark = "Jumping!"
+		elif interaction == "ROLL":
+			proposed_state = "ROLL"
+			bark = "Rolling away!"
+		elif interaction == "HEAVY_ATTACK":
+			proposed_state = "HEAVY_ATTACK"
+			bark = "Take this!"
+		elif interaction == "ATTACK_RANGE":
 			proposed_state = "ATTACK"
 			bark = "Die!"
 		elif interaction == "CHASE":

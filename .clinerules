@@ -13,6 +13,10 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
 - **Multi-Hit Prevention**: Attack hitboxes were causing multiple damage per attack. Solution: Added `has_hit` flag to attack_hitbox, reset on animation finish.
 - **Killzone Death State**: Killzone bypassed proper death handling. Solution: Killzone now calls `body.die()` for proper slow-motion death sequence.
 - **Godot**: Always use the ls or read_file tool on the relevant .tscn file before implementing logic that relies on get_node() or $ shorthand.
+- **One-Shot Protection**: Jump/roll/attacks were overridden immediately by CHASE/IDLE. Solution: `if not anim_locked and use_llsm:` to skip LLSM during locked animations, `anim_locked = true` for one-shot states, reset on animation_finished.
+- **Air Control**: Jump had no horizontal movement. Solution: Allow movement in JUMP/FALL states with `current_accel *= 0.6` for 60% air control (floaty but responsive).
+- **LLSM Integration**: Player auto-blocking near enemies. Solution: Override `if proposed in ["BLOCK"] and not Input.is_action_pressed("block"): proposed = "IDLE"`
+- **Debug Spam**: Console flooded every frame. Solution: Comment physics debug, make DEBUG INPUTS conditional on change, move bark/hitbox prints to always fire on state change.
 
 ## Current Architecture
 - **Player States (11)**: IDLE, RUN, JUMP, FALL, ROLL, ATTACK_LIGHT, ATTACK_HEAVY, BLOCK, STAGGER, HURT, DIE
@@ -82,8 +86,9 @@ HelloKnight is a 2D action RPG/Souls-like game built in Godot 4. Focus on method
 ## Future States
 - STAMINA, BLOCK_STAMINA, CLIMB, SWIM
 
-## Status v0.1
-- Core states/combat complete, GitHub pushed
-- Combat testing/balancing next
+## Status v0.2
+- Player controls complete: LLSM integration, air control, one-shot protection, debug cleanup
+- Enemy AI ready for expansion
+- Ready for playtesting and balancing
 
-Last updated: 2026-03-27
+Last updated: 2026-03-29
